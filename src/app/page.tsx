@@ -13,17 +13,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { set } from "zod";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
 
 const handleLogin = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     setError("");
 
@@ -36,9 +36,12 @@ const handleLogin = async (e: React.FormEvent) => {
       if (res.status === 200) {
         window.location.href = "/admin/employee"; // redirect kalau sukses
       }
-    } catch (err: any) {
+    } catch (error) {
+      setLoading(false);
+      throw error; // lempar error ke catch block
       // setError(err.response?.data?.message || "Login gagal");
     }
+    setLoading(false);
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

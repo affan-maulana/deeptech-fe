@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 const BASE_URL = "http://localhost:3001";
 
 // PUT /api/users/:id
-export async function PUT(req: Request, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
@@ -39,8 +39,9 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
 }
 
 // GET user by id
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await context.params;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -50,7 +51,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       });
     }
 
-    const res = await fetch(`${BASE_URL}/users/${params.id}`, {
+    const res = await fetch(`${BASE_URL}/users/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

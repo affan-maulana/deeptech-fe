@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 const BASE_URL = "http://localhost:3001";
 
 // PUT /api/employee/:id
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
@@ -15,9 +16,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         });
     }
 
-    console.log('URL:',`${BASE_URL}/employee/${params.id}`);
+    console.log('URL:',`${BASE_URL}/employee/${id}`);
     const body = await req.json();
-    const res = await fetch(`${BASE_URL}/employee/${params.id}`, {
+    const res = await fetch(`${BASE_URL}/employee/${id}`, {
       method: "PATCH",
       headers: { 
         "Content-Type": "application/json",
@@ -37,7 +38,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // DELETE /api/employee/:id
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
@@ -47,8 +49,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
         status: 401,
         });
     }
-    
-    const res = await fetch(`${BASE_URL}/employee/${params.id}`, {
+
+    const res = await fetch(`${BASE_URL}/employee/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,

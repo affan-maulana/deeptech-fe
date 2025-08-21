@@ -27,8 +27,8 @@ import { EmployeeForm } from "@/components/EmployeeForm";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 import { Employee } from "@/lib/types";
 import { Edit } from "lucide-react";
-import Link from "next/link";
 import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -69,6 +69,9 @@ export default function EmployeesPage() {
       const { remainingLeaves, ...updatedEmployeeData } = employeeData;
       if (selectedEmployee) {
         const res = await api.put(`/api/employee/${selectedEmployee.id}`, updatedEmployeeData);
+        if (res.status !== 200) {
+          throw new Error("Failed to update employee");
+        }
         setEmployees(
           employees.map((emp) =>
             emp.id === selectedEmployee.id ? res.data.data : emp
@@ -79,8 +82,11 @@ export default function EmployeesPage() {
         setEmployees([...employees, res.data.data]);
       }
       setIsFormOpen(false);
-    } catch (err) {
-      console.error("Failed to save employee:", err);
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      console.debug("Failed to create employee", err?.response);
+      const alertMessage = err?.response?.data?.message || "Unknown error";
+      alert("Oops, " + alertMessage);
     }
   };
 
@@ -124,14 +130,7 @@ export default function EmployeesPage() {
             <TableBody>
               {employees.map((employee) => (
                 <TableRow key={employee.id}>
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/employees/${employee.id}`}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      {`${employee.firstName} ${employee.lastName}`}
-                    </Link>
-                  </TableCell>
+                  <TableCell>{`${employee.firstName} ${employee.lastName}`}</TableCell>
                   <TableCell>{employee.email}</TableCell>
                   <TableCell>{employee.phoneNumber}</TableCell>
                   <TableCell>{employee.gender}</TableCell>

@@ -29,6 +29,7 @@ import { LeaveData } from "@/lib/types";
 import { Edit } from "lucide-react";
 import { format } from "date-fns";
 import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 
 // Helper untuk mengubah tanggal ke format YYYY-MM-DD
 const formatDate = (date: Date) => format(date, "yyyy-MM-dd");
@@ -129,9 +130,10 @@ export default function LeavesPage() {
         setLeaves((prevLeaves) =>
             prevLeaves.map((l) => (l.id === selectedLeave.id ? updatedLeave : l))
         );
-      } catch (error: Error | any) {
-        console.debug("Failed to create leave", error?.response?.data?.message);
-        const alertMessage = error?.response?.data?.message || "Unknown error";
+      } catch (error) {
+        const err = error as AxiosError<{ message: string }>;
+        console.debug("Failed to create leave", err?.response?.data?.message);
+        const alertMessage = err?.response?.data?.message || "Unknown error";
         alert("Oops, " + alertMessage);
       }
     } else {
@@ -144,9 +146,10 @@ export default function LeavesPage() {
       try {
         const res = await api.post("/api/leaves", newLeave);
         setLeaves((prevLeaves) => [...prevLeaves, res.data.data]);
-      } catch (error: any) {
-        console.debug("Failed to create leave", error.response.data.message);
-        const alertMessage = error?.response?.data?.message || "Unknown error";
+      } catch (error) {
+        const err = error as AxiosError<{ message: string }>;
+        console.debug("Failed to create leave", err?.response?.data?.message);
+        const alertMessage = err?.response?.data?.message || "Unknown error";
         alert("Oops, " + alertMessage);
       }
     }
@@ -173,7 +176,7 @@ export default function LeavesPage() {
               <TableRow>
                 <TableHead>Employee</TableHead>
                 <TableHead>Reason</TableHead>
-                <TableHead>Leave Date</TableHead> {/* <-- Judul kolom diubah */}
+                <TableHead>Leave Date</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>

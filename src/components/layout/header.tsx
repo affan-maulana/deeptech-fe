@@ -27,11 +27,11 @@ import { ProfileDialog } from "../ProfileDialog"; // 2. Import komponen dialog b
 import { api } from "@/lib/api";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/admins", icon: Briefcase, label: "Admins" },
-  { href: "/dashboard/employees", icon: Users, label: "Employees" },
-  { href: "/dashboard/leaves", icon: Calendar, label: "Leaves" },
-  { href: "/dashboard/profile", icon: User, label: "Profile" },
+  // { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  // { href: "/dashboard/admins", icon: Briefcase, label: "Admins" },
+  { href: "/admin/employee", icon: Users, label: "Employees" },
+  { href: "/admin/leaves", icon: Calendar, label: "Leaves" },
+  // { href: "/admin/use", icon: User, label: "Profile" },
 ];
 
 export function Header() {
@@ -71,7 +71,7 @@ export function Header() {
           <SheetContent side="left" className="flex flex-col">
             <nav className="grid gap-2 text-lg font-medium">
               <Link
-                href="/dashboard"
+                href="/admin/leaves"
                 className="flex items-center gap-2 text-lg font-semibold mb-4"
               >
                 <span>Leave Management</span>
