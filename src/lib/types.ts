@@ -12,15 +12,40 @@ export interface Employee {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
   gender: string;
+  remainingLeaves: number;
 }
 
 export interface Leave {
-  id: number;
-  employeeId: number;
+  id: string;
+  employeeId?: string;
+  reason: string;
+  leaveDate?: string;
+  createdAt?: string;
+}
+
+export interface LeaveData {
+  id: string;
   reason: string;
   startDate: string;
   endDate: string;
+  createdAt?: string;
+  updatedAt?: string;
+  employee?: Employee;
+}
+
+export interface Dropdown {
+  value: string;
+  label: string;
+}
+
+export interface UserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  gender: string;
+  dateOfBirth: string;
 }

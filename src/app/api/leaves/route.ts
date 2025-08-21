@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 const BASE_URL = "http://localhost:3001";
 
 
-// GET /api/employee → ambil semua employee
+// GET /api/leaves → ambil semua leaves
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -16,7 +16,7 @@ export async function GET() {
       });
     }
 
-    const res = await fetch(`${BASE_URL}/employee`, {
+    const res = await fetch(`${BASE_URL}/leaves`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -27,15 +27,15 @@ export async function GET() {
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch (err) {
-    console.error("Error fetching employees:", err);
+    console.error("Error fetching leaves:", err);
     return NextResponse.json(
-      { message: "Failed to fetch employees" },
+      { message: "Failed to fetch leaves" },
       { status: 500 }
     );
   }
 }
 
-// POST /api/employee → tambah employee
+// POST /api/leaves → tambah leave
 export async function POST(req: Request) {
   try {
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const res = await fetch(`${BASE_URL}/employee`, {
+    const res = await fetch(`${BASE_URL}/leaves`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,9 +61,9 @@ export async function POST(req: Request) {
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch (err) {
-    console.error("Error creating employee:", err);
+    console.error("Error creating leave:", err);
     return NextResponse.json(
-      { message: "Failed to create employee" },
+      { message: "Failed to create leave" },
       { status: 500 }
     );
   }

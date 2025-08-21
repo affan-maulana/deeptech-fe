@@ -5,17 +5,12 @@ import { usePathname } from "next/navigation";
 import {
   Users,
   Calendar,
-  User,
-  LogOut,
-  LayoutDashboard,
-  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 // Definisikan item navigasi dalam sebuah array agar mudah dikelola
 const navItems = [
-  { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  // { href: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
 //   { href: "/admin/users", icon: Briefcase, label: "Admins" },
   { href: "/admin/employee", icon: Users, label: "Employees" },
   { href: "/admin/leave", icon: Calendar, label: "Leaves" },
@@ -49,11 +44,6 @@ export function Sidebar() {
               </Link>
             ))}
           </nav>
-        </div>
-        <div className="mt-auto p-4">
-          <Button size="sm" variant="outline" className="w-full">
-            <LogOut className="mr-2 h-4 w-4" /> Logout
-          </Button>
         </div>
       </div>
     </div>

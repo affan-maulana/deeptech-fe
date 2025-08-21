@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,55 +25,73 @@ import {
 } from "@/components/ui/dialog";
 import { EmployeeForm } from "@/components/EmployeeForm";
 import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
-import { employees as initialEmployees } from "@/lib/dummy-data";
 import { Employee } from "@/lib/types";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null
-  );
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
-  // Handler to open the "Add New Employee" modal
+  // Load data employee dari backend
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await api.get("/api/employee");
+        if (res.status !== 200) {
+          throw new Error("Failed to fetch employees");
+        }
+
+        setEmployees(res.data.data);
+      } catch (err) {
+        console.error("Failed to fetch employees:", err);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
   const handleAddNew = () => {
     setSelectedEmployee(null);
     setIsFormOpen(true);
   };
 
-  // Handler to open the "Edit Employee" modal
   const handleEdit = (employee: Employee) => {
     setSelectedEmployee(employee);
     setIsFormOpen(true);
   };
 
-  // Handler for form submission (Create or Update)
-  const handleFormSubmit = (employeeData: Omit<Employee, "id">) => {
-    if (selectedEmployee) {
-      // Update existing employee
-      setEmployees(
-        employees.map((emp) =>
-          emp.id === selectedEmployee.id
-            ? { ...emp, ...employeeData }
-            : emp
-        )
-      );
-    } else {
-      // Add new employee
-      const newEmployee: Employee = {
-        id: Math.max(...employees.map((e) => e.id), 0) + 1, // Generate a new ID
-        ...employeeData,
-      };
-      setEmployees([...employees, newEmployee]);
+  // Create / Update employee
+  const handleFormSubmit = async (employeeData: Omit<Employee, "id">) => {
+    try {
+      // remove remainingLeaves from employee data
+      const { remainingLeaves, ...updatedEmployeeData } = employeeData;
+      if (selectedEmployee) {
+        const res = await api.put(`/api/employee/${selectedEmployee.id}`, updatedEmployeeData);
+        setEmployees(
+          employees.map((emp) =>
+            emp.id === selectedEmployee.id ? res.data.data : emp
+          )
+        );
+      } else {
+        const res = await api.post("/api/employee", updatedEmployeeData);
+        setEmployees([...employees, res.data.data]);
+      }
+      setIsFormOpen(false);
+    } catch (err) {
+      console.error("Failed to save employee:", err);
     }
-    setIsFormOpen(false);
   };
 
-  // Handler for deleting an employee
-  const handleDelete = (employeeId: number) => {
-    setEmployees(employees.filter((emp) => emp.id !== employeeId));
+  // Delete employee
+  const handleDelete = async (employeeId: number) => {
+    try {
+      await api.delete(`/api/employee/${employeeId}`);
+      setEmployees(employees.filter((emp) => emp.id !== employeeId));
+    } catch (err) {
+      console.error("Failed to delete employee:", err);
+    }
   };
 
   return (
@@ -96,8 +114,10 @@ export default function EmployeesPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
+                <TableHead>Phone Number</TableHead>
                 <TableHead>Gender</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Remaining Leaves</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -113,8 +133,10 @@ export default function EmployeesPage() {
                     </Link>
                   </TableCell>
                   <TableCell>{employee.email}</TableCell>
-                  <TableCell>{employee.phone}</TableCell>
+                  <TableCell>{employee.phoneNumber}</TableCell>
                   <TableCell>{employee.gender}</TableCell>
+                  <TableCell>{employee.address}</TableCell>
+                  <TableCell>{employee.remainingLeaves}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
                       <Button

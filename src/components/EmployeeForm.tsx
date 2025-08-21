@@ -27,9 +27,10 @@ const employeeFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
   address: z.string().min(1, "Address is required"),
   gender: z.string().min(1, "Gender is required"),
+  remainingLeaves: z.number().min(0, "Remaining leaves must be at least 0"),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
@@ -51,9 +52,10 @@ export function EmployeeForm({
       firstName: "",
       lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       address: "",
       gender: "",
+      remainingLeaves: 0, // Uncomment if you want to include this field
     },
   });
 
@@ -103,7 +105,7 @@ export function EmployeeForm({
         />
         <FormField
           control={form.control}
-          name="phone"
+          name="phoneNumber"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone</FormLabel>
@@ -140,8 +142,8 @@ export function EmployeeForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

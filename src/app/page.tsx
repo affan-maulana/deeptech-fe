@@ -30,12 +30,14 @@ const handleLogin = async (e: React.FormEvent) => {
     try {
       // Panggil Next.js API route
       const res = await api.post("/api/login", { email, password });
+      // save user id to local storage
+      localStorage.setItem("userId", res.data.data);
 
       if (res.status === 200) {
-        window.location.href = "/admin/dashboard"; // redirect kalau sukses
+        window.location.href = "/admin/employee"; // redirect kalau sukses
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login gagal");
+      // setError(err.response?.data?.message || "Login gagal");
     }
   };
   return (
