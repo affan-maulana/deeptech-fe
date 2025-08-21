@@ -188,7 +188,7 @@ export default function LeavesPage() {
                         : "Unknown"}
                     </TableCell>
                     <TableCell>{leave.reason}</TableCell>
-                    <TableCell>{leave.startDate}</TableCell>{" "}
+                    <TableCell>{leave.startDate}</TableCell>
                     {/* <-- Tampilkan satu tanggal */}
                     <TableCell>
                       {leave.createdAt
